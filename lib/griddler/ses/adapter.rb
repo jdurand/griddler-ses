@@ -81,16 +81,12 @@ module Griddler
         @message ||= Mail.read_from_string(Base64.decode64(email_json['content']))
       end
 
-      def multipart?
-        message.parts.count > 0
-      end
-
       def text_part
-        multipart? ? message.text_part.body.to_s : message.body.to_s
+        message.text_part.try(:body).try(:to_s) || message.body.try(:to_s)
       end
 
       def html_part
-        multipart? ? message.html_part.body.to_s : nil
+        message.html_part.try(:body).try(:to_s) || nil
       end
 
       def raw_headers
